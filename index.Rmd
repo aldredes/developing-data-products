@@ -1,0 +1,99 @@
+---
+title       : Meteorite Landings
+subtitle    : A Reproducible Pitch Presentation for Coursera Developing Data Products Course
+author      : Aldrin R. Desoloc 
+date        : Apr. 30, 2017
+framework   : revealjs       
+mode        : selfcontained 
+revealjs    :
+    theme       : night     # {"default", "simple", "sky", "beige", "serif", "solarized", "blood", "moon", "night", "black", "league" or "white"}
+    highlight   : tango   # {"default", "tango", "pygments", "kate", "monochrome", "espresso", "zenburn", and "haddock".}
+    center      : "true"
+    transition  : concave          # {"default", "fade", "slide", "convex", "concave", "zoom" or "none"}
+    incremental : "true"
+---
+
+<style>
+body {
+    background-image:url(assets/img/20161008_GINOP_KHK_2.jpg); 
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.left-aligned {
+    text-align: left;
+}
+
+.slides .footer{
+    position: absolute;
+    bottom: -30%;
+    left: 3%;
+    white-space: nowrap; 
+}
+</style>
+
+## Meteorite Landings 
+#### (A Reproducible Pitch Presentation for 
+#### Coursera Developing Data Products Course)
+<br />
+#### Aldrin R. Desoloc 
+#### `r library(lubridate); todate <- Sys.time(); ifelse(month(todate)==5, strftime(Sys.time(),"%h %d, %Y"), strftime(Sys.time(),"%h. %d, %Y"))`
+
+--- .left-aligned 
+
+## Overview
+
+* The **Meteorite Landings** application can be accessed via https://aldredes.shinyapps.io/meteors/.  
+* This shiny application basically shows the map of known meteorite landings around the world since year 301 until 2013 A.D. based on the comprehensive dataset from The Meteoritical Society.  
+* The map is rendered using **leaflet**, and the graph is built with **plotly**.
+* The dataset can be downloaded from https://data.nasa.gov/Space-Science/Meteorite-Landings/gh4g-9sfh.
+<div class="footer">
+           <small> ** The background image used: http://www.csillagaszat.hu/wp-content/uploads/2016/10/20161008_GINOP_KHK_2.jpg </small>
+</div>
+
+
+--- .left-aligned  &vertical 
+
+## The Dataset
+
+The data was made tidy using an R script by:
+
+* removing all rows with no year and geolocation data;
+* removing all rows with year beyond the current year;
+* removing all rows with geolocation `(0, 0)`; 
+* creating a new columns `countryName` and `iso2` to get the country and its corresponding official ISO 2 alpha country code from the map boundaries based on `getMap()` function of `rworldmap` library; and 
+* creating a new column `wmk2006Class` derived from `recclass` column based on the _Weissberg-McCoy-Krot (2006) scheme_ * 
+<br>
+<small> * https://en.wikipedia.org/wiki/File:Meteorite_Classification_after_Weissberg_McCoy_Krot_2006_Stony_Iron.svg </small>
+
+_(Click on down navigation pointer to view the slide of summary of dataset.)_
+
+*** .left-aligned 
+
+## The Dataset
+
+Below is the summary of data *:
+
+```{r load_data, echo = FALSE, warning = FALSE}
+suppressPackageStartupMessages(library(data.table))
+meteors <- fread("nasa_meteors_scrubbed.csv", na.strings = c("NA", "#DIV/0!", ""), header = TRUE)
+meteors$recclass <- as.factor(meteors$recclass)
+meteors$wmk2006Class <- as.factor(meteors$wmk2006Class)
+meteors$countryName <- as.factor(meteors$countryName)
+meteors$iso2 <- as.factor(meteors$iso2)
+summary(meteors)
+```
+
+<small> * `NA`'s in the `countryName` and `iso2` means no country was retrieved from the function and probably points to a body of water on earth. </small>
+
+--- .left-aligned 
+
+## User Interface / Features
+
+* To make the application simpler, we limit the filtering elements and user inputs.  The user can filter the data by **year**, and **classifications** according to _Weissberg-McCoy-Krot (2006) scheme_. 
+* Additional features include a **plot** of counts by year, a selection to change the **map tile provider**, and an option to change the **map information display**.
+* The choropleth map was built using the spatial data from a _key markup language (KML)_ file * to set the boundaries among countries.
+<small> * The said KML file can be retrieved from https://community.qlik.com/docs/DOC-7295 and it's last updated in 2014. </small>
+* Progress bar is also shown when loading information on the map.  _(The loading of map elements depend on the response from the shiny server, and sometimes it takes ~5secs to load the updated elements.)_
+

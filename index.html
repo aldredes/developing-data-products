@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Meteorite Landings</title>
+  <meta name="description" content="">
+  <meta name="author" content="Aldrin R. Desoloc">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="stylesheet" href="libraries/frameworks/revealjs/css/reveal.min.css">
+  <link rel="stylesheet" href="libraries/frameworks/revealjs/css/theme/night.css" id="theme">
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" id="theme">
+  <!--[if lt IE 9]>
+  <script src="lib/js/html5shiv.js"></script>
+  <![endif]-->  <link rel="stylesheet" href = "assets/css/ribbons.css">
+
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class='' data-state='' id='slide-1'>
+  
+  <style>
+body {
+    background-image:url(assets/img/20161008_GINOP_KHK_2.jpg); 
+    background-position: left top;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.left-aligned {
+    text-align: left;
+}
+
+.slides .footer{
+    position: absolute;
+    bottom: -30%;
+    left: 3%;
+    white-space: nowrap; 
+}
+</style>
+
+<h2>Meteorite Landings</h2>
+
+<h4>(A Reproducible Pitch Presentation for</h4>
+
+<h4>Coursera Developing Data Products Course)</h4>
+
+<p><br /></p>
+
+<h4>Aldrin R. Desoloc</h4>
+
+<h4>May 04, 2017</h4>
+
+</section>
+<section class='left-aligned' data-state='' id='slide-2'>
+  <h2>Overview</h2>
+  <ul>
+<li>The <strong>Meteorite Landings</strong> application can be accessed via <a href="https://aldredes.shinyapps.io/meteors/">https://aldredes.shinyapps.io/meteors/</a>.<br></li>
+<li>This shiny application basically shows the map of known meteorite landings around the world since year 301 until 2013 A.D. based on the comprehensive dataset from The Meteoritical Society.<br></li>
+<li>The map is rendered using <strong>leaflet</strong>, and the graph is built with <strong>plotly</strong>.</li>
+<li>The dataset can be downloaded from <a href="https://data.nasa.gov/Space-Science/Meteorite-Landings/gh4g-9sfh">https://data.nasa.gov/Space-Science/Meteorite-Landings/gh4g-9sfh</a>.
+<div class="footer">
+       <small> ** The background image used: <a href="http://www.csillagaszat.hu/wp-content/uploads/2016/10/20161008_GINOP_KHK_2.jpg">http://www.csillagaszat.hu/wp-content/uploads/2016/10/20161008_GINOP_KHK_2.jpg</a> </small>
+</div></li>
+</ul>
+
+</section>
+<section>
+   <section class='left-aligned' data-state=''>
+    <h2>The Dataset</h2>
+    <p>The data was made tidy using an R script by:</p>
+
+<ul>
+<li>removing all rows with no year and geolocation data;</li>
+<li>removing all rows with year beyond the current year;</li>
+<li>removing all rows with geolocation <code>(0, 0)</code>; </li>
+<li>creating a new columns <code>countryName</code> and <code>iso2</code> to get the country and its corresponding official ISO 2 alpha country code from the map boundaries based on <code>getMap()</code> function of <code>rworldmap</code> library; and </li>
+<li>creating a new column <code>wmk2006Class</code> derived from <code>recclass</code> column based on the <em>Weissberg-McCoy-Krot (2006) scheme</em> * 
+<br>
+<small> * <a href="https://en.wikipedia.org/wiki/File:Meteorite_Classification_after_Weissberg_McCoy_Krot_2006_Stony_Iron.svg">https://en.wikipedia.org/wiki/File:Meteorite_Classification_after_Weissberg_McCoy_Krot_2006_Stony_Iron.svg</a> </small></li>
+</ul>
+
+<p><em>(Click on down navigation pointer to view the slide of summary of dataset.)</em></p>
+
+    <aside class='notes'>
+      
+    </aside>
+   </section>
+   <section class='left-aligned' data-state=''>
+    <h2>The Dataset</h2>
+
+<p>Below is the summary of data *:</p>
+
+<pre><code>##      name                 id          nametype            recclass   
+##  Length:32039       Min.   :    1   Length:32039       L6     :6583  
+##  Class :character   1st Qu.: 9258   Class :character   H5     :5611  
+##  Mode  :character   Median :18627   Mode  :character   H4     :3335  
+##                     Mean   :20802                      H6     :3232  
+##                     3rd Qu.:27266                      L5     :2746  
+##                     Max.   :57455                      LL5    :1897  
+##                                                        (Other):8635  
+##     mass (g)            fall                year          reclat      
+##  Min.   :       0   Length:32039       Min.   : 301   Min.   :-87.37  
+##  1st Qu.:       6   Class :character   1st Qu.:1982   1st Qu.:-79.68  
+##  Median :      30   Mode  :character   Median :1991   Median :-72.00  
+##  Mean   :   18553                      Mean   :1987   Mean   :-46.98  
+##  3rd Qu.:     202                      3rd Qu.:2000   3rd Qu.: 18.40  
+##  Max.   :60000000                      Max.   :2013   Max.   : 81.17  
+##  NA&#39;s   :127                                                          
+##     reclong        GeoLocation                          countryName   
+##  Min.   :-165.43   Length:32039       Antarctica              :22090  
+##  1st Qu.:  26.00   Class :character   Oman                    : 2992  
+##  Median :  56.70   Mode  :character   United States of America: 1651  
+##  Mean   :  73.01                      Libya                   : 1466  
+##  3rd Qu.: 159.39                      Australia               :  638  
+##  Max.   : 354.47                      (Other)                 : 3153  
+##                                       NA&#39;s                    :   49  
+##       iso2                      wmk2006Class  
+##  AQ     :22090   Achondrites          :  986  
+##  OM     : 2992   Chondrites           :30304  
+##  US     : 1651   Primitive Achondrites:  441  
+##  LY     : 1466   Unclassified         :  308  
+##  AU     :  638                                
+##  (Other): 3135                                
+##  NA&#39;s   :   67
+</code></pre>
+
+<p><small> * <code>NA</code>&#39;s in the <code>countryName</code> and <code>iso2</code> means no country was retrieved from the function and probably points to a body of water on earth. </small></p>
+
+    <aside class='notes'>
+      
+    </aside>
+   </section>
+</section>
+<section class='left-aligned' data-state='' id='slide-4'>
+  <h2>User Interface / Features</h2>
+  <ul>
+<li>To make the application simpler, we limit the filtering elements and user inputs.  The user can filter the data by <strong>year</strong>, and <strong>classifications</strong> according to <em>Weissberg-McCoy-Krot (2006) scheme</em>. </li>
+<li>Additional features include a <strong>plot</strong> of counts by year, a selection to change the <strong>map tile provider</strong>, and an option to change the <strong>map information display</strong>.</li>
+<li>The choropleth map was built using the spatial data from a <em>key markup language (KML)</em> file * to set the boundaries among countries.
+<small> * The said KML file can be retrieved from <a href="https://community.qlik.com/docs/DOC-7295">https://community.qlik.com/docs/DOC-7295</a> and it&#39;s last updated in 2014. </small></li>
+<li>Progress bar is also shown when loading information on the map.  <em>(The loading of map elements depend on the response from the shiny server, and sometimes it takes ~5secs to load the updated elements.)</em></li>
+</ul>
+
+</section>
+    </div>
+  </div>
+</body>
+  <script src="libraries/frameworks/revealjs/lib/js/head.min.js"></script>
+  <script src="libraries/frameworks/revealjs/js/reveal.min.js"></script>
+  <script>
+  // Full list of configuration options available here:
+  // https://github.com/hakimel/reveal.js#configuration
+  Reveal.initialize({
+    controls: true,
+    progress: true,
+    history: true,
+    center: true,
+    theme: Reveal.getQueryHash().theme || 'night', 
+    transition: Reveal.getQueryHash().transition || 'concave', 
+    dependencies: [
+    // Cross-browser shim that fully implements classList -
+    // https://github.com/eligrey/classList.js/
+      { src: 'libraries/frameworks/revealjs/lib/js/classList.js', condition: function() { return !document.body.classList;}},
+      // Zoom in and out with Alt+click
+      { src: 'libraries/frameworks/revealjs/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+      // Speaker notes
+      { src: 'libraries/frameworks/revealjs/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } },
+      // Remote control your reveal.js presentation using a touch device
+      //{ src: 'libraries/frameworks/revealjs/plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+      ]
+  });
+  </script>  <!-- LOAD HIGHLIGHTER JS FILES -->
+<script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<!-- DONE LOADING HIGHLIGHTER JS FILES -->
+ 
+
+</html>
