@@ -92,7 +92,14 @@ body {
 
 <p>Below is the summary of data *:</p>
 
-<pre><code>##      name                 id          nametype            recclass   
+<pre><code class="r">suppressPackageStartupMessages(library(data.table))
+meteors &lt;- fread(&quot;data/nasa_meteors_scrubbed.csv&quot;, na.strings = c(&quot;NA&quot;, &quot;#DIV/0!&quot;, &quot;&quot;), header = TRUE)
+meteors$recclass &lt;- as.factor(meteors$recclass)
+meteors$wmk2006Class &lt;- as.factor(meteors$wmk2006Class)
+meteors$countryName &lt;- as.factor(meteors$countryName)
+meteors$iso2 &lt;- as.factor(meteors$iso2)
+summary(meteors)
+##      name                 id          nametype            recclass   
 ##  Length:32039       Min.   :    1   Length:32039       L6     :6583  
 ##  Class :character   1st Qu.: 9258   Class :character   H5     :5611  
 ##  Mode  :character   Median :18627   Mode  :character   H4     :3335  

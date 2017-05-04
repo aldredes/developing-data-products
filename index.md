@@ -76,7 +76,14 @@ _(Click on down navigation pointer to view the slide of summary of dataset.)_
 Below is the summary of data *:
 
 
-```
+```r
+suppressPackageStartupMessages(library(data.table))
+meteors <- fread("data/nasa_meteors_scrubbed.csv", na.strings = c("NA", "#DIV/0!", ""), header = TRUE)
+meteors$recclass <- as.factor(meteors$recclass)
+meteors$wmk2006Class <- as.factor(meteors$wmk2006Class)
+meteors$countryName <- as.factor(meteors$countryName)
+meteors$iso2 <- as.factor(meteors$iso2)
+summary(meteors)
 ##      name                 id          nametype            recclass   
 ##  Length:32039       Min.   :    1   Length:32039       L6     :6583  
 ##  Class :character   1st Qu.: 9258   Class :character   H5     :5611  

@@ -75,9 +75,9 @@ _(Click on down navigation pointer to view the slide of summary of dataset.)_
 
 Below is the summary of data *:
 
-```{r load_data, echo = FALSE, warning = FALSE}
+```{r load_data, echo = TRUE, warning = FALSE, collapse = TRUE}
 suppressPackageStartupMessages(library(data.table))
-meteors <- fread("nasa_meteors_scrubbed.csv", na.strings = c("NA", "#DIV/0!", ""), header = TRUE)
+meteors <- fread("data/nasa_meteors_scrubbed.csv", na.strings = c("NA", "#DIV/0!", ""), header = TRUE)
 meteors$recclass <- as.factor(meteors$recclass)
 meteors$wmk2006Class <- as.factor(meteors$wmk2006Class)
 meteors$countryName <- as.factor(meteors$countryName)
